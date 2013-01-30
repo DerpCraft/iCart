@@ -18,6 +18,10 @@ public class Config {
 	public static boolean Debug;
 	public static Util.DebugLevel DebugLevel;
 	public static int LogDelay;
+        public static String DatabaseName;
+        public static String DatabaseUser;
+        public static String DatabasePass;
+        public static String DatabaseHost;
 
 	private static Configuration config;
 

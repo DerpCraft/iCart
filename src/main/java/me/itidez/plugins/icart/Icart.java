@@ -18,13 +18,14 @@ public class Icart extends JavaPlugin {
     public String version;
     public PluginDescriptionFile description;
     public static Config config;
-    public static HashMap<Location, Sign> signList;
+    public HashMap<String, Sign> signList;
+    private File slapiFile = new File(getDataFolder(), "signList.bin");
     
     @Override
     public void onDisable() {
         instance = null;
         try {
-            SLAPI.save(signList, new File(getDataFolder() + "signList.bin"));
+            SLAPI.save(signList,slapiFile);
         } catch (Exception ex) {
             Logger.getLogger(Icart.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -39,9 +40,12 @@ public class Icart extends JavaPlugin {
         EventManager em = new EventManager(this);
         em.registerEvents();
         try {
-            signList = (HashMap<Location, Sign>)SLAPI.load(new File(getDataFolder() + "signList.bin"));
+            signList = (HashMap<String, Sign>)SLAPI.load(slapiFile);
         } catch (Exception ex) {
             Logger.getLogger(Icart.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(signList == null) {
+            signList = new HashMap<String, Sign>();
         }
         Util.info("Loaded");
         Util.debug("Debug mode enabled");

@@ -19,7 +19,7 @@ public class EventManager {
     public void registerEvents() {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new EventButtonDetector(), plugin);
-        pm.registerEvents(new EventSignDetector(), plugin);
+        pm.registerEvents(new EventSignDetector(plugin), plugin);
         Util.debug("Registered Button Detector");
     }
 }
