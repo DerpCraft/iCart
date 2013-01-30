@@ -1,22 +1,26 @@
 package me.itidez.plugins.icart;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import java.util.logging.Logger;
+import me.itidez.plugins.icart.util.Util;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Icart extends JavaPlugin implements Listener {
+public class Icart extends JavaPlugin {
+    public static Icart instance;
+    public String version;
+    public PluginDescriptionFile description;
+    @Override
     public void onDisable() {
-        // TODO: Place any custom disable code here.
+        instance = null;
     }
 
+    @Override
     public void onEnable() {
-        getServer().getPluginManager().registerEvents(this, this);
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        event.getPlayer().sendMessage("Welcome, " + event.getPlayer().getDisplayName() + "!");
+        instance = this;
+        description = getDescription();
+        version = description.getVersion();
+        Util.info("Loaded");
+        Util.debug("Debug mode enabled");
     }
 }
 
