@@ -5,4 +5,4 @@ main: me.itidez.plugins.icart.Icart
 name: iCart
 startup: postworld
 url: http://derpcraft.co/
-version: '1.0'
+version: '1.01B'

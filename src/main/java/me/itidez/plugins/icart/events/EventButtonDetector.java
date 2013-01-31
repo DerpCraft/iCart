@@ -40,13 +40,13 @@ public class EventButtonDetector implements Listener {
                     if(sign == null)
                         return;*/
                     String[] lines = sign.getLines();
-                    Util.debug("Sign detected: Lines: "+lines[0]+" "+lines[1]+" "+lines[2]+" "+lines[3]);
-                    if(lines[0].equalsIgnoreCase("[iCart]")) {
-                        Bukkit.broadcastMessage(ChatColor.GREEN+"Sign Detected!");
+                    //Util.debug("Sign detected: Lines: "+lines[0]+" "+lines[1]+" "+lines[2]+" "+lines[3]);
+                    if(lines[0].equalsIgnoreCase(ChatColor.DARK_BLUE+"[iCart]") && lines[2].equalsIgnoreCase("Call")) {
+                        player.sendMessage(ChatColor.GREEN+"Call button pushed!");
                     }
                 }
             }
-            Bukkit.broadcastMessage(ChatColor.GREEN+"Button Pushed!");
+            //Bukkit.broadcastMessage(ChatColor.GREEN+"Button Pushed!");
         }
     }
     

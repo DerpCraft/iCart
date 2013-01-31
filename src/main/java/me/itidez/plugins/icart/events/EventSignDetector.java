@@ -6,9 +6,13 @@ import me.itidez.plugins.icart.util.Db;
 import me.itidez.plugins.icart.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
 /**
@@ -22,40 +26,65 @@ public class EventSignDetector implements Listener {
     
     public EventSignDetector(Icart plugin) {
         this.plugin = plugin;
-        this.db = new Db(plugin, "localhost", "iTidez_iCart", "iTidez_iCart", "plurlife1337");
+        this.db = new Db(plugin, "localhost", "itidez_iCart", "itidez_iCart", "plurlife1337");
+    }
+    
+    @EventHandler
+    public void onSignBreak(BlockBreakEvent event) {
+        if(event.isCancelled()) return;
+        Block b = event.getBlock();
+        if(b.getType() == Material.SIGN || b.getType() == Material.WALL_SIGN) {
+            Sign s = (Sign)b.getLocation().getBlock().getState();
+            String[] lines = s.getLines();
+            ResultSet result = db.query("SELECT `id`,`target`,`location_x`,`location_y`,`location_z`,`type` FROM `signs` WHERE `id` = '"+ lines[1] +"'");
+            String id = db.resultString(result, 1);
+            if(lines[1].equalsIgnoreCase(id)) {
+                db.query("DELETE FROM `signs` WHERE `id`='"+lines[1]+"' ");
+                //Bukkit.broadcastMessage(ChatColor.GREEN+"Entery Deleted");
+            }
+        }
     }
     
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
         if(event.isCancelled()) return;
         String line1 = event.getLine(0);
-        Sign sign = (Sign)event.getBlock().getState();
+        String line2 = event.getLine(1);
+        String line3 = event.getLine(2);
+        String line4 = event.getLine(3);
+        //Sign sign = (Sign)event.getBlock().getState();
         if(line1.equalsIgnoreCase("[iCart]")) {
-            Bukkit.broadcastMessage("Found sign");
-            sign.setLine(0, ChatColor.BLUE+"[iCart]");
-            if(sign.getLine(1) == null) {
+            //Bukkit.broadcastMessage("Found sign");
+            event.setLine(0, ChatColor.DARK_BLUE+"[iCart]");
+            event.getBlock().getState().update();
+            //sign.setLine(1, ChatColor.BLUE+"[iCart]");
+            //sign.update();
+            //String[] lines = sign.getLines();
+            if(line2 == null) {
                 Util.debug("Error - Line 1 Null");
             }
-            db.query("CREATE TABLE IF NOT EXISTS `signs` (`id` VARCHAR(16) NOT NULL,`target` VARCHAR(16) NOT NULL, `location_x` INT(4) unsigned NOT NULL, `location_y` INT(3) unsigned NOT NULL, `location_z` INT(4) unsigned NOT NULL, `type` VARCHAR(16) NOT NULL, PRIMARY KEY (`name`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
-            ResultSet result = db.query("SELECT `id`,`target`,`location_x`,`location_y`,`location_z`,`type` FROM `signs` WHERE `id` = '"+sign.getLine(2) +"'");
+            //Bukkit.broadcastMessage(line1 + " " + line2 + line3 + line4);
+            db.query("CREATE TABLE IF NOT EXISTS `signs` (`id` VARCHAR(16) NOT NULL,`target` VARCHAR(16) NOT NULL, `location_x` INT(16) NOT NULL, `location_y` INT(16) NOT NULL, `location_z` INT(16) NOT NULL, `type` VARCHAR(16) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+            ResultSet result = db.query("SELECT `id`,`target`,`location_x`,`location_y`,`location_z`,`type` FROM `signs` WHERE `id` = '"+ line2 +"'");
             String id = db.resultString(result, 1);
-            if(sign.getLine(1).equalsIgnoreCase(id)) {
-                Bukkit.broadcastMessage("Sign already registered");
+            if(line2.equalsIgnoreCase(id)) {
+                //Bukkit.broadcastMessage("Sign already registered");
             } else {
-                plugin.signList.put(sign.getLine(1), sign);
-                if(addToDatabase(sign)) {
-                    Bukkit.broadcastMessage("Placed Sign");
+                //plugin.signList.put(sign.getLine(1), sign);
+                if(addToDatabase(line2, line3, line4, event.getBlock().getLocation())) {
+                    //Bukkit.broadcastMessage("Placed Sign");
                 } else
-                    Bukkit.broadcastMessage("Error placing sign");
+                    //Bukkit.broadcastMessage("Error placing sign");
+                    Util.debug("Error saving sign data");
             }
         }
     }
     
-    public boolean addToDatabase(Sign sign) {
-        if(sign == null || !(sign instanceof Sign)) return false;
-        db.query("INSERT INTO `signs`(`id`,`target`,`location_x`,`location_y`,`location_z`,`type`) VALUES("+sign.getLine(2) +", "+sign.getLine(3) +", "+sign.getBlock().getLocation().getBlockX()+", "+sign.getBlock().getLocation().getBlockY()+", "+sign.getBlock().getLocation().getBlockZ()+", "+sign.getLine(1)+")");
-        
-        ResultSet result = db.query("SELECT `id`,`target`,`location_x`,`location_y`,`location_z`,`type` FROM `signs` WHERE `id` = '"+sign.getLine(2) +"'");
+    public boolean addToDatabase(String id, String type, String target, Location loc) {
+        //if(sign == null || !(sign instanceof Sign)) return false;
+        //String[] lines = sign.getLines();
+        db.query("INSERT INTO `signs`(`id`,`target`,`location_x`,`location_y`,`location_z`,`type`) VALUES('"+id+"', '"+target+"', "+loc.getBlockX()+", "+loc.getBlockY()+", "+loc.getBlockZ()+", '"+type+"')");
+        ResultSet result = db.query("SELECT `id`,`target`,`location_x`,`location_y`,`location_z`,`type` FROM `signs` WHERE `id` = '"+ id +"'");
         if(result == null)
             return false;
         else
