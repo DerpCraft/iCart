@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.itidez.plugins.icart.events.EventManager;
 import me.itidez.plugins.icart.util.Config;
+import me.itidez.plugins.icart.util.Db;
 import me.itidez.plugins.icart.util.Util;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -20,10 +21,12 @@ public class Icart extends JavaPlugin {
     public static Config config;
     public HashMap<String, Sign> signList;
     private File slapiFile = new File(getDataFolder(), "signList.bin");
+    public Db db;
     
     @Override
     public void onDisable() {
         instance = null;
+        config = null;
         try {
             SLAPI.save(signList,slapiFile);
         } catch (Exception ex) {
@@ -37,7 +40,8 @@ public class Icart extends JavaPlugin {
         description = getDescription();
         version = description.getVersion();
         config = new Config(this);
-        EventManager em = new EventManager(this);
+        this.db = new Db(this, "localhost", "itidez_iCart", "itidez_iCart", "plurlife1337");
+        EventManager em = new EventManager(this, db);
         em.registerEvents();
         try {
             signList = (HashMap<String, Sign>)SLAPI.load(slapiFile);

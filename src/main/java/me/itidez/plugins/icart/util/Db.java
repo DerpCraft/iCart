@@ -29,6 +29,12 @@ public class Db
 		
 		initDriver("com.mysql.jdbc.Driver");
 	}
+        
+        public Db(final Logger logger, final String host, final String database, final String user, final String password) {
+            this.plugin = null;
+            url = "jdbc:mysql://" + host + "/" + database + "?user=" + user + "&password=" + password;
+            log = logger;
+        }
 	
 	/**
 	 * Connect/create a SQLite database

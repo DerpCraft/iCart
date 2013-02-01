@@ -3,6 +3,7 @@ package me.itidez.plugins.icart.events;
 import java.util.ArrayList;
 import java.util.List;
 import me.itidez.plugins.icart.Icart;
+import me.itidez.plugins.icart.util.Db;
 import me.itidez.plugins.icart.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,6 +22,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
  * @author iTidez
  */
 public class EventButtonDetector implements Listener {
+    public Icart plugin;
+    public Db db;
+    
+    public EventButtonDetector(Icart plugin, Db db) {
+        this.plugin = plugin;
+        this.db = db;
+    }
     
     @EventHandler
     public void onButtonPush(PlayerInteractEvent event) {
@@ -41,7 +49,9 @@ public class EventButtonDetector implements Listener {
                         return;*/
                     String[] lines = sign.getLines();
                     //Util.debug("Sign detected: Lines: "+lines[0]+" "+lines[1]+" "+lines[2]+" "+lines[3]);
-                    if(lines[0].equalsIgnoreCase(ChatColor.DARK_BLUE+"[iCart]") && lines[2].equalsIgnoreCase("Call")) {
+                    if(lines[0].equalsIgnoreCase(ChatColor.DARK_BLUE+"[iCart]") && lines[2].equalsIgnoreCase(ChatColor.GREEN+"Call")) {
+                        IcartSpawnEvent se = new IcartSpawnEvent(b, lines[1], lines[3], player, db);
+                        Bukkit.getServer().getPluginManager().callEvent(se);
                         player.sendMessage(ChatColor.GREEN+"Call button pushed!");
                     }
                 }
