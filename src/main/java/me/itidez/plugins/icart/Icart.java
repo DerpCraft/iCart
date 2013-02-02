@@ -22,6 +22,7 @@ public class Icart extends JavaPlugin {
     public HashMap<String, Sign> signList;
     private File slapiFile = new File(getDataFolder(), "signList.bin");
     public Db db;
+    public HashMap<Integer, String[]> cartList;
     
     @Override
     public void onDisable() {
@@ -41,6 +42,7 @@ public class Icart extends JavaPlugin {
         version = description.getVersion();
         config = new Config(this);
         this.db = new Db(this, "localhost", "itidez_iCart", "itidez_iCart", "plurlife1337");
+        this.cartList = new HashMap<Integer, String[]>();
         EventManager em = new EventManager(this, db);
         em.registerEvents();
         try {
