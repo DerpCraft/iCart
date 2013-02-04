@@ -5,6 +5,11 @@ import java.util.List;
 import me.itidez.plugins.icart.Icart;
 import me.itidez.plugins.icart.util.Db;
 import me.itidez.plugins.icart.util.Util;
+import net.milkycraft.Scheduler.GeneralTimer;
+import net.milkycraft.Scheduler.PlayerTimer;
+import net.milkycraft.Scheduler.Schedule;
+import net.milkycraft.Scheduler.Scheduler;
+import net.milkycraft.Scheduler.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -50,9 +55,14 @@ public class EventButtonDetector implements Listener {
                     String[] lines = sign.getLines();
                     //Util.debug("Sign detected: Lines: "+lines[0]+" "+lines[1]+" "+lines[2]+" "+lines[3]);
                     if(lines[0].equalsIgnoreCase(ChatColor.DARK_BLUE+"[iCart]") && lines[2].equalsIgnoreCase(ChatColor.GREEN+"Call")) {
+                        if(PlayerTimer.isCoolingDown("iTidez", Time.CARTSPAWNDELAY)) {
+                            return;
+                        }
+                        Schedule s = Scheduler.schedule(plugin, "iTidez", Time.CARTSPAWNDELAY);
+                        Scheduler.schedulePlayerCooldown(s);
                         IcartSpawnEvent se = new IcartSpawnEvent(b, lines[1], lines[3], player, db);
                         Bukkit.getServer().getPluginManager().callEvent(se);
-                        player.sendMessage(ChatColor.GREEN+"Call button pushed!");
+                        //player.sendMessage(ChatColor.GREEN+"Call button pushed!");
                     }
                 }
             }

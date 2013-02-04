@@ -8,6 +8,8 @@ import me.itidez.plugins.icart.events.EventManager;
 import me.itidez.plugins.icart.util.Config;
 import me.itidez.plugins.icart.util.Db;
 import me.itidez.plugins.icart.util.Util;
+import net.milkycraft.Scheduler.GeneralTimer;
+import net.milkycraft.Scheduler.Time;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -53,6 +55,11 @@ public class Icart extends JavaPlugin {
         if(signList == null) {
             signList = new HashMap<String, Sign>();
         }
+        getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+            public void run() {
+                
+            }
+        }, 0L, 20L);
         Util.info("Loaded");
         Util.debug("Debug mode enabled");
     }
