@@ -2,10 +2,56 @@ package me.itidez.plugins.icart;
 
 /* 
  *Author: iTidez
-**/
+ */
 
 public class DestinationManager {
+	public Icart plugin;
+	public Db db;
 	
+	public DestinationManager(Icart plugin, Db db) {
+		this.plugin = plugin;	
+		this.db = db;
+	}
+	
+	public Destination getDestiantionFromName(String name) {
+		ResultSet result = db.query("SELECT `id`, `location_x`, `location_y`, `location_z` FROM `signs` WHERE `id` = '"+name+"'");
+		Location loc = new Location("world", result.getInt(2), result.getInt(3), result.getInt(4));
+		Destination des = new Destination(name, loc);
+		return des;
+	}
+	
+	public Vector getDestinationVector(Destination des) {
+		Vector vector = new Vector(des.getX(), des.getY(), des.getZ());
+		return vector;
+	}
+	
+	public Destination createDestination(String id, String type, String target, Location loc) {
+		db.query("INSERT INTO `signs`(`id`,`target`,`location_x`,`location_y`,`location_z`,`type`) VALUES('"+id+"', '"+target+"', "+loc.getBlockX()+", "+loc.getBlockY()+", "+loc.getBlockZ()+", '"+type+"')");
+		return new Destination(id, loc);
+	}
+	
+	public Station createStation(String id, String type, Location loc, String[] actions) {
+			db.query("CREATE TABLE IF NOT EXISTS `stations` (`id` VARCHAR(16) NOT NULL, `location` VARCHAR(100) NOT NULL, `actions` VARCHAR(1000) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+			if(id.isEmpty()) {
+				return null;
+			}
+			if(!type.equalsIgnoreCase("station")) {
+				return null;
+			}
+			if(loc == null) {
+				return null;	
+			}
+			if(actions.length == 0) {
+				actions[0] = "default";	
+			}
+			String location = loc.getBlockX()+","+loc.getBlockY()+","+loc.getBlockZ();
+			String action;
+			for(String a : actions) {
+				action = action + a + ",";	
+			}
+			db.query("INSERT INTO `stations`(`id`,`location`,`actions`) VALUES('"+id+"', '"+location+"', "+action+")");
+			return new Station(id, loc);
+	}
 }
 //TODO: Include Skype messaging to staff chat from IRC integration API included below
 /*
