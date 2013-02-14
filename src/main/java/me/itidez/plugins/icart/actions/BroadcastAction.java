@@ -1,15 +1,16 @@
 package me.itidez.plugins.icart.actions;
 
-public class DebugAction implements BaseAction extends Action {
-	private String name;
-	private Double version;
-	private static boolean canceled;
+public class BroadcastAction implements BaseAction {
+	public String name;
+	public Action action;
+	public Double version;
+	public String message;
 	
 	public static void execute(List<Object> arguments) {
 		if(isCanceled()) {
 			return;	
 		}
-		Bukkit.getServer().broadcastMessage(ChatColor.DARK_AQUA+"Debug Action successfully passed");
+		Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes("&", message);
 	}
 	
 	public String getName() {
