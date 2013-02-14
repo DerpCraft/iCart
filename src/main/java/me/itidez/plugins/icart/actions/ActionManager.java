@@ -36,6 +36,10 @@ public class ActionManager {
 	}
 	
 	public void callAction(Action a, List<Object> arguments) {
-		a.getAction().execute(arguments);	
+		try {
+			a.getAction().execute(arguments);	
+		} catch (Exception e) {
+			throw new InvalidActionError();	
+		}
 	}
 }
